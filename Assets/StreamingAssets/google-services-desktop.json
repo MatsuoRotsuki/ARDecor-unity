@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "508636360954",
+    "firebase_url": "https://ar-decor-app-default-rtdb.firebaseio.com",
+    "project_id": "ar-decor-app",
+    "storage_bucket": "ar-decor-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508636360954:android:6b5ff2d085cb650719d943",
+        "android_client_info": {
+          "package_name": "com.hedspi.ardecor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeSZ3yqlnqad-By36cVCSm2nQvu4Dacc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:508636360954:android:1e6beec8877dadfc19d943",
+        "android_client_info": {
+          "package_name": "com.soict.arfurniture"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeSZ3yqlnqad-By36cVCSm2nQvu4Dacc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

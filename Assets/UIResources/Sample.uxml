@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UIResources/SampleStyle.uss?fileID=7433441132597879392&amp;guid=67ffaec84b9c8734b909a43f7b017370&amp;type=3#SampleStyle" />
+    <ui:VisualElement name="Container" style="flex-grow: 1; background-color: rgba(255, 0, 0, 0); width: auto; height: auto; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
+        <ui:VisualElement name="VisualElement" style="flex-grow: 0; width: 100%; height: 50%; background-color: rgba(255, 0, 0, 0); align-self: auto; align-items: flex-start;">
+            <ui:Button text="Click" parse-escape-sequences="true" display-tooltip-when-elided="true" name="openBtn" class="button-blue" />
+        </ui:VisualElement>
+        <ui:VisualElement name="bottomContainer" style="position: absolute; width: 100%; height: 100%;">
+            <ui:VisualElement name="backdrop" class="scrim" />
+            <ui:VisualElement name="bottomSheet" class="bottomsheet" style="transition-duration: 1s;">
+                <ui:VisualElement name="image" class="image" />
+                <ui:Button text="&#10;" parse-escape-sequences="true" display-tooltip-when-elided="true" name="closeBtn" style="position: absolute; right: 40px; width: 45px; height: 45px; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); background-color: rgba(188, 188, 188, 0); background-image: url(&apos;project://database/Assets/Images/reject.png?fileID=2800000&amp;guid=cc0419ea6bd43594f97788f8d8a1c674&amp;type=3#reject&apos;); padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
