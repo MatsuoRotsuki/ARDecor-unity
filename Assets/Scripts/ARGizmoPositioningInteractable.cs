@@ -1,10 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace UnityEngine.XR.Interaction.Toolkit.AR
 {
-    [AddComponentMenu("XR/AR Gizmo Translation Interactable", 22)]
+    [AddComponentMenu("XR/AR Gizmo Positioning Interactable", 22)]
     [RequireComponent(typeof(ARSelectionInteractable))]
     public class ARGizmoPositioningInteractable : ARBaseGestureInteractable
     {
@@ -18,8 +20,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
             set => maxTranslationDistance = value;
         }
 
-        const float k_PositionSpeed = 12f;
-        const float k_DiffThreshold = 0.0001f;
+        const float k_PositionSpeed = 0.5f;
 
         bool m_IsActive;
 
@@ -39,22 +40,91 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
             }
         }
 
-        protected override bool CanStartManipulationForGesture(DragGesture gesture)
+        protected override bool CanStartManipulationForGesture(TwoFingerDragGesture gesture)
         {
-            return gesture.targetObject != null && gesture.targetObject == gameObject && transform.parent != null;
+            return IsGameObjectSelected() && gesture.targetObject == null;
         }
 
-        protected override void OnStartManipulation(DragGesture gesture)
-        {
-
-        }
-
-        protected override void OnContinueManipulation(DragGesture gesture)
+        protected override void OnStartManipulation(TwoFingerDragGesture gesture)
         {
 
         }
 
-        protected override void OnEndManipulation(DragGesture gesture)
+        protected override void OnContinueManipulation(TwoFingerDragGesture gesture)
+        {
+            var camera = xrOrigin != null
+                ? xrOrigin.Camera
+#pragma warning disable 618
+                : (arSessionOrigin.Camera != null ? arSessionOrigin.camera : Camera.main);
+#pragma warning restore 618
+            if (camera == null)
+                return;
+            var cameraUp = camera.transform.up;
+            var cameraForward = camera.transform.forward;
+            var cameraRight = camera.transform.right;
+            var cameraPosition = camera.transform.position;
+
+            var interactableForward = transform.forward;
+            var interactableUp = transform.up;
+            var interactableRight = transform.right;
+
+            Vector2 interactableForward2D = new Vector2(
+                Vector3.Dot(interactableForward, cameraRight),
+                Vector3.Dot(interactableForward, cameraUp)
+            ).normalized;
+
+            Vector2 interactableUp2D = new Vector2(
+                Vector3.Dot(interactableUp, cameraRight),
+                Vector3.Dot(interactableUp, cameraUp)
+            ).normalized;
+
+            Vector2 interactableRight2D = new Vector2(
+                Vector3.Dot(interactableRight, cameraRight),
+                Vector3.Dot(interactableRight, cameraUp)
+            ).normalized;
+
+            int alignAxes = 0;
+            bool alignX = false, alignY = false, alignZ = false;
+            if (Mathf.Abs(Vector2.Dot(interactableForward2D, gesture.delta.normalized)) > 0.9f)
+            {
+                alignZ = true;
+                alignAxes++;
+            }
+            if (Mathf.Abs(Vector2.Dot(interactableUp2D, gesture.delta.normalized)) > 0.9f)
+            {
+                alignY = true;
+                alignAxes++;
+            }
+            if (Mathf.Abs(Vector2.Dot(interactableRight2D, gesture.delta.normalized)) > 0.9f)
+            {
+                alignX = true;
+                alignAxes++;
+            }
+
+            if (alignAxes == 1)
+            {
+                if (alignZ)
+                {
+                    transform.Translate(
+                        interactableForward * Vector2.Dot(interactableForward2D, gesture.delta) * Time.deltaTime * 0.1f,
+                        Space.World);
+                }
+                else if (alignY)
+                {
+                    transform.Translate(
+                        interactableUp * Vector2.Dot(interactableUp2D, gesture.delta) * Time.deltaTime * 0.1f,
+                        Space.World);
+                }
+                else if (alignX)
+                {
+                    transform.Translate(
+                        interactableRight * Vector2.Dot(interactableRight2D, gesture.delta) * Time.deltaTime * 0.1f,
+                        Space.World);
+                }
+            }
+        }
+
+        protected override void OnEndManipulation(TwoFingerDragGesture gesture)
         {
 
         }

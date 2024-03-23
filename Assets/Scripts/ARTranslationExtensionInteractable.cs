@@ -81,12 +81,12 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
 
             var desiredPlacement = xrOrigin != null
                 ? GestureTransformationHelper.GetBestPlacementPosition(
-                    transform.parent.position, gesture.position, m_GroundingPlaneHeight, 0.03f,
-                    maxTranslationDistance, objectGestureTranslationMode, xrOrigin, fallbackLayerMask: m_FallbackLayerMask)
+                    transform.parent.position, gesture.position, m_GroundingPlaneHeight, 0.1f,
+                    maxTranslationDistance, objectGestureTranslationMode, xrOrigin, gameObject, fallbackLayerMask: m_FallbackLayerMask)
 #pragma warning disable 618
                 : GestureTransformationHelper.GetBestPlacementPosition(
-                    transform.parent.position, gesture.position, m_GroundingPlaneHeight, 0.03f,
-                    maxTranslationDistance, objectGestureTranslationMode, arSessionOrigin, fallbackLayerMask: m_FallbackLayerMask);
+                    transform.parent.position, gesture.position, m_GroundingPlaneHeight, 0.1f,
+                    maxTranslationDistance, objectGestureTranslationMode, arSessionOrigin, gameObject, fallbackLayerMask: m_FallbackLayerMask);
 #pragma warning restore 618
 
             if (desiredPlacement.hasHoveringPosition && desiredPlacement.hasPlacementPosition)
@@ -114,22 +114,35 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
                 return;
 
             var oldAnchor = transform.parent.gameObject;
+            bool lastAnchorIsStackable = oldAnchor.TryGetComponent<StackableObject>(out var lastStackable);
+
             var desiredPose = new Pose(m_DesiredAnchorPosition, m_LastPlacement.placementRotation);
 
-            var desiredLocalPosition = transform.parent.InverseTransformPoint(desiredPose.position);
+            if (!m_LastPlacement.hasStackable)
+            {
+                //Next anchor is not StackableObject
+                var desiredLocalPosition = transform.parent.InverseTransformPoint(desiredPose.position);
 
-            if (desiredLocalPosition.magnitude > maxTranslationDistance)
-                desiredLocalPosition = desiredLocalPosition.normalized * maxTranslationDistance;
-            desiredPose.position = transform.parent.TransformPoint(desiredLocalPosition);
+                if (desiredLocalPosition.magnitude > maxTranslationDistance)
+                    desiredLocalPosition = desiredLocalPosition.normalized * maxTranslationDistance;
+                desiredPose.position = transform.parent.TransformPoint(desiredLocalPosition);
 
-            var anchor = new GameObject("PlacementAnchor").transform;
-            anchor.position = m_LastPlacement.placementPosition;
-            anchor.rotation = m_LastPlacement.placementRotation;
-            transform.parent = anchor;
+                var anchor = new GameObject("PlacementAnchor").transform;
+                anchor.position = m_LastPlacement.placementPosition;
+                anchor.rotation = m_LastPlacement.placementRotation;
+                transform.parent = anchor;
+                m_DesiredLocalPosition = Vector3.zero;
+            }
+            else
+            {
+                //Next anchor is StackableObject
+                var anchor = m_LastPlacement.stackable.transform;
+                transform.parent = anchor;
+                m_DesiredLocalPosition = anchor.InverseTransformPoint(desiredPose.position);
+            }
 
-            Destroy(oldAnchor);
-
-            m_DesiredLocalPosition = Vector3.zero;
+            if (!lastAnchorIsStackable)
+                Destroy(oldAnchor);
 
             // Rotate if the plane direction has changed.
             if (((desiredPose.rotation * Vector3.up) - transform.up).magnitude > k_DiffThreshold)

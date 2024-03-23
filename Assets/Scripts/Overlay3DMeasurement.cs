@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Overlay3DMeasurement : MonoBehaviour
@@ -7,7 +5,15 @@ public class Overlay3DMeasurement : MonoBehaviour
     /// <summary>
     /// See <see cref="MonoBehaviour"/>.
     /// </summary>
-    private void Awake()
+    protected void Awake()
+    {
+        //TODO
+    }
+
+    /// <summary>
+    /// See <see cref="MonoBehaviour"/>.
+    /// </summary>
+    protected void Start()
     {
 
     }
@@ -15,45 +21,25 @@ public class Overlay3DMeasurement : MonoBehaviour
     /// <summary>
     /// See <see cref="MonoBehaviour"/>.
     /// </summary>
-    private void Start()
+    protected void OnEnable()
     {
-        CombineMeshes();
+
     }
 
     /// <summary>
     /// See <see cref="MonoBehaviour"/>.
     /// </summary>
-    private void Update()
+    protected void OnDisable()
     {
 
     }
 
-    private void CombineMeshes()
-    {
-        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-        Mesh finalMesh = new Mesh();
+    // /// <summary>
+    // /// /// See <see cref="MonoBehaviour"/>.
+    // /// </summary>
+    // protected void Update()
+    // {
 
-        for (int i = 0; i < meshFilters.Length; i++)
-        {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-        }
+    // }
 
-        finalMesh.CombineMeshes(combine, true);
-
-        MeshFilter newMeshFilter = gameObject.AddComponent<MeshFilter>();
-        newMeshFilter.mesh = finalMesh;
-
-        BoxCollider collider = gameObject.AddComponent<BoxCollider>();
-
-        Bounds combinedBounds = finalMesh.bounds;
-        Debug.Log("Final Mesh Bounding Box:");
-        Vector3 localCenter = transform.InverseTransformPoint(combinedBounds.center);
-        Debug.Log($"Center: {localCenter.x} {localCenter.y} {localCenter.z}");
-        Debug.Log($"Size: {combinedBounds.size.x} {combinedBounds.size.y} {combinedBounds.size.z}");
-
-        collider.center = localCenter;
-        collider.size = combinedBounds.size;
-    }
 }

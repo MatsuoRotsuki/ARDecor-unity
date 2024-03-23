@@ -78,6 +78,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
         static ARRaycastManager s_ARRaycastManager;
         static ARPlaneManager s_ARPlaneManager;
 
+        static FurnituresManager s_FurnituresManager;
+
         static readonly List<ARRaycastHit> s_Hits = new List<ARRaycastHit>();
 
         static bool TryGetTrackableManager([CanBeNull] XROrigin sessionOrigin, out ARRaycastManager raycastManager) =>
@@ -131,6 +133,22 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
             }
 
             sessionOrigin = s_XROrigin;
+            return true;
+        }
+
+        static bool TryGetFurnituresManager(out FurnituresManager furnituresManager)
+        {
+            if (s_FurnituresManager == null)
+            {
+                if (!ComponentLocatorHelper<FurnituresManager>.TryFindComponent(out s_FurnituresManager))
+                {
+                    Debug.LogWarning($"Could not find {nameof(FurnituresManager)} in scene.");
+                    furnituresManager = s_FurnituresManager;
+                    return false;
+                }
+            }
+
+            furnituresManager = s_FurnituresManager;
             return true;
         }
 
@@ -286,6 +304,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
             float maxTranslationDistance,
             GestureTranslationMode gestureTranslationMode,
             XROrigin sessionOrigin,
+            GameObject selectedObject,
             TrackableType trackableTypes = TrackableType.PlaneWithinPolygon,
             int fallbackLayerMask = 0)
         {
@@ -293,6 +312,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
 
             if (sessionOrigin == null)
                 TryGetSessionOrigin(out sessionOrigin);
+
+            TryGetFurnituresManager(out FurnituresManager furnitureManager);
 
             var camera = sessionOrigin != null ? sessionOrigin.Camera : Camera.main;
             if (camera == null)
@@ -315,6 +336,25 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
             var distance = (cameraTransform.position - currentAnchorPosition).magnitude;
             var distanceHoverRatio = Mathf.Clamp01(distance / k_HoverDistanceThreshold);
             hoverOffset *= distanceHoverRatio;
+
+            // Get the ray to cast into the scene from the perspective of camera to an Stackable
+            var cameraRay = camera.ScreenPointToRay(screenPosition);
+            if (furnitureManager.RaycastFurniture(
+                cameraRay,
+                out Vector3 hitPosition,
+                out StackableObject hitStackableObj,
+                selectedObject))
+            {
+                result.hasStackable = true;
+                result.stackable = hitStackableObj;
+                result.hasPlacementPosition = true;
+                result.placementPosition = hitPosition;
+                result.hasHoveringPosition = true;
+                result.hoveringPosition = hitPosition + (Vector3.up * hoverOffset);
+                result.hasPlane = true;
+                result.updatedGroundingPlaneHeight = hitStackableObj.transform.position.y;
+                return result;
+            }
 
             // The best estimate of the point in the plane where the object will be placed:
             Vector3 groundingPoint;
@@ -354,7 +394,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
                         result.hasPlacementPosition = true;
                         result.placementPosition = groundingPoint;
                         result.hasHoveringPosition = true;
-                        result.hoveringPosition = groundingPoint;
+                        result.hoveringPosition = groundingPoint + (Vector3.up * hoverOffset);
                         result.updatedGroundingPlaneHeight = groundingPoint.y;
                         result.placementRotation = firstHit.pose.rotation;
                         return result;
@@ -376,7 +416,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
             // If the grounding point is lower than the current grounding plane height, or if the
             // ray cast did not return a hit, then we extend the grounding plane to infinity, and do
             // a new ray cast into the scene from the perspective of the camera.
-            var cameraRay = camera.ScreenPointToRay(screenPosition);
+
+            // var cameraRay = camera.ScreenPointToRay(screenPosition);
             var groundingPlane =
                 new Plane(Vector3.up, new Vector3(0f, groundingPlaneHeight, 0f));
 
@@ -499,6 +540,10 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
             /// The resulting starting height of the plane that the object is being placed along.
             /// </summary>
             public float updatedGroundingPlaneHeight { get; set; }
+
+            public bool hasStackable { get; set; }
+
+            public StackableObject stackable { get; set; }
         }
     }
 
