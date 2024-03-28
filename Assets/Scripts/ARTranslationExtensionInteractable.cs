@@ -103,8 +103,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
                 else
                     m_DesiredRotation = transform.rotation;
 
-                if (desiredPlacement.hasPlane)
-                    m_LastPlacement = desiredPlacement;
+                m_LastPlacement = desiredPlacement;
             }
         }
 
@@ -114,7 +113,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
                 return;
 
             var oldAnchor = transform.parent.gameObject;
-            bool lastAnchorIsStackable = oldAnchor.TryGetComponent<StackableObject>(out var lastStackable);
+            bool isLastAnchorStackable = oldAnchor.TryGetComponent<StackableObject>(out var lastStackable);
 
             var desiredPose = new Pose(m_DesiredAnchorPosition, m_LastPlacement.placementRotation);
 
@@ -131,6 +130,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
                 anchor.position = m_LastPlacement.placementPosition;
                 anchor.rotation = m_LastPlacement.placementRotation;
                 transform.parent = anchor;
+                //anchor.transform.parent = 
                 m_DesiredLocalPosition = Vector3.zero;
             }
             else
@@ -141,7 +141,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
                 m_DesiredLocalPosition = anchor.InverseTransformPoint(desiredPose.position);
             }
 
-            if (!lastAnchorIsStackable)
+            if (!isLastAnchorStackable)
                 Destroy(oldAnchor);
 
             // Rotate if the plane direction has changed.

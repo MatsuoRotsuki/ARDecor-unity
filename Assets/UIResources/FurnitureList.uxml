@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="width: 100%; height: 100%; justify-content: flex-end;">
+        <ui:VisualElement style="height: 90%; background-color: rgb(255, 255, 255); border-top-left-radius: 30px; border-top-right-radius: 30px;">
+            <ui:VisualElement name="container" style="height: auto; width: 100%; padding-top: 50px; padding-left: 30px; font-size: 40px; -unity-font-style: bold; -unity-font: url(&apos;project://database/Assets/MobileARTemplateAssets/UI/Fonts/Inter-Regular.ttf?fileID=12800000&amp;guid=109207b3ec45446afb082067696d36e6&amp;type=3#Inter-Regular&apos;);">
+                <ui:Label text="ROOM SETS" enable-rich-text="false" style="font-size: 45px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

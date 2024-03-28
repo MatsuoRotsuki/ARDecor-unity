@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(FurnitureObject))]
 public class StackableObject : MonoBehaviour
 {
+    [SerializeField]
     private Collider m_Collider;
     public Collider boxCollider => m_Collider;
     private FurnituresManager m_FurnitureManager;
@@ -44,6 +45,12 @@ public class StackableObject : MonoBehaviour
 
     public bool RaycastOnTop(Ray ray, out RaycastHit resultHitInfo)
     {
+        if (m_Collider == null)
+        {
+            if (!TryGetComponent(out m_Collider))
+                Debug.LogError($"Could not find {nameof(BoxCollider)} in scene.");
+        }
+
         if (m_Collider.Raycast(ray, out RaycastHit hitInfo, 100f))
         {
             resultHitInfo = hitInfo;

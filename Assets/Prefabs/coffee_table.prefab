@@ -16,7 +16,7 @@ PrefabInstance:
     - target: {fileID: -2073770117850789380, guid: 86e5c5f6a5a2ed54c8b7a9acb053a60a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.88790905
       objectReference: {fileID: 0}
     - target: {fileID: -2073770117850789380, guid: 86e5c5f6a5a2ed54c8b7a9acb053a60a,
         type: 3}
@@ -26,7 +26,7 @@ PrefabInstance:
     - target: {fileID: -2073770117850789380, guid: 86e5c5f6a5a2ed54c8b7a9acb053a60a,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1.1261008
       objectReference: {fileID: 0}
     - target: {fileID: -2073770117850789380, guid: 86e5c5f6a5a2ed54c8b7a9acb053a60a,
         type: 3}
@@ -96,6 +96,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Collider: {fileID: 0}
+  m_ModelPath: models/coffee_table.glb
+  m_modelID: 
 --- !u!114 &3566502373042352824
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -351,7 +351,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
                 result.placementPosition = hitPosition;
                 result.hasHoveringPosition = true;
                 result.hoveringPosition = hitPosition + (Vector3.up * hoverOffset);
-                result.hasPlane = true;
+                result.hasPlane = false;
                 result.updatedGroundingPlaneHeight = hitStackableObj.transform.position.y;
                 return result;
             }
@@ -433,7 +433,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
                 result.hasHoveringPosition = true;
                 result.hoveringPosition = groundingPoint + (Vector3.up * hoverOffset);
                 result.updatedGroundingPlaneHeight = groundingPoint.y;
-                result.hasPlane = true;
+                result.hasPlane = false;
             }
             else
             {

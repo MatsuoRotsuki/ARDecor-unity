@@ -42,7 +42,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.AR
 
         protected override bool CanStartManipulationForGesture(TwoFingerDragGesture gesture)
         {
-            return IsGameObjectSelected() && gesture.targetObject == null;
+            return IsGameObjectSelected();
         }
 
         protected override void OnStartManipulation(TwoFingerDragGesture gesture)
